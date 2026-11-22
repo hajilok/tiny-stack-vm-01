@@ -47,10 +47,11 @@ function run(p, g) {
       case 0x17: D[sp - 1] = -D[sp - 1] | 0; break; // NEG, wraps
       case 0x1b: D[sp - 1] = ~D[sp - 1]; break; // NOT
       case 0x30: case 0x31: case 0x32: { // JMP / JZ / JNZ, 16-bit signed offset
+        const op = p[q];
         const rel = ((p[q + 1] | p[q + 2] << 8) << 16) >> 16;
-        if (q === 0x30) { pc = nx + rel; break; }
+        if (op === 0x30) { pc = nx + rel; break; } // JMP always takes
         const v = D[--sp];
-        if (q === 0x31 ? v === 0 : v !== 0) pc = nx + rel;
+        if (op === 0x31 ? v === 0 : v !== 0) pc = nx + rel;
         break;
       }
       case 0x33: // CALL, 16-bit unsigned target
